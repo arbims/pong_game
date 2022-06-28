@@ -2,9 +2,9 @@ require 'ruby2d'
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
-RECT_SIZE = 50
+RECT_SIZE = 20
 FRAME = 6
-RECT_COLOR = "red"
+RECT_COLOR = "white"
 BACKGROUND = "black"
 BAR_LEN = 100
 BAR_THICCNESS = 10
@@ -28,7 +28,7 @@ def main
 
   song = Music.new('app.wav')
   song.loop = true
-  song.volume = 20
+  song.volume = 0
   song.play
 
   proj_x = 100
@@ -38,44 +38,64 @@ def main
 
   bar_x = 0
   bar_y = BAR_Y - BAR_THICCNESS/2
+  @pause = false
+
   @proj_rect = Square.new(x: proj_x, y: proj_y, size: RECT_SIZE, color: RECT_COLOR)
 
   @barreact = Rectangle.new(x: bar_x, y: bar_y, width: BAR_LEN,
     height: BAR_THICCNESS, color: BAR_COLOR)
-
-  update do
-
-    proj_nx = proj_x + proj_dx * FRAME
-    if proj_nx < 0 || proj_x + RECT_SIZE > WINDOW_WIDTH
-      proj_dx = proj_dx * -1
-      proj_nx = proj_x + proj_dx * FRAME
-    end
-    
-    proj_ny = proj_y + proj_dy * FRAME
-    if proj_ny < 0 || proj_y + RECT_SIZE > WINDOW_HEIGHT
-      proj_dy = proj_dy * -1
-      proj_ny = proj_y + proj_dy * FRAME
-    end
-    proj_x = proj_nx
-    proj_y = proj_ny
-    @proj_rect.x = proj_x
-    @proj_rect.y = proj_y
   
+  update do
+    if @pause == false
+      proj_nx = proj_x + proj_dx * FRAME
+      if proj_nx < 0 || proj_x + RECT_SIZE > WINDOW_WIDTH
+        proj_dx = proj_dx * -1
+        proj_nx = proj_x + proj_dx * FRAME
+      end
+      
+      proj_ny = proj_y + proj_dy * FRAME
+      if proj_ny < 0 || proj_y + RECT_SIZE > WINDOW_HEIGHT
+        proj_dy = proj_dy * -1
+        proj_ny = proj_y + proj_dy * FRAME
+      end
+     
+      if @barreact.contains?(@proj_rect.x,@proj_rect.y)
+        proj_dy = proj_dy * -1
+        proj_ny = proj_y + proj_dy * FRAME
+      end
+
+      proj_x = proj_nx
+      proj_y = proj_ny
+      @proj_rect.x = proj_x
+      @proj_rect.y = proj_y
+    end
+
+  end
+  on :key_held do |event|
+    if @pause == false
+      # A key was pressed
+      key = event.key
+      case key
+      when 'right'
+          @barreact.x = @barreact.x + 10 if @barreact.x + BAR_LEN < WINDOW_WIDTH
+      when 'left'
+        @barreact.x = @barreact.x - 10 if @barreact.x > 0
+      end
+    end
   end
 
-  on :key_held do |event|
+  on :key_down do |event|
     # A key was pressed
     key = event.key
-    puts key
     case key
-    when 'right'
-        @barreact.x = @barreact.x + 10 if @barreact.x + BAR_LEN < WINDOW_WIDTH
-    when 'left'
-      @barreact.x = @barreact.x - 10 if @barreact.x > 0
+    when 'space'
+      @pause = !@pause
     when 'a'
       exit
     end
-  end
+    puts @pause
+ end
+ 
   show
 
 end
