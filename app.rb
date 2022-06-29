@@ -7,9 +7,9 @@ FRAME = 6
 RECT_COLOR = "white"
 BACKGROUND = "black"
 BAR_LEN = 100
-BAR_THICCNESS = 10
+BAR_THICCNESS = 20
 BAR_Y =  WINDOW_HEIGHT - BAR_THICCNESS - 100
-BAR_COLOR= "blue"
+BAR_COLOR= "red"
 
 class Point 
   attr_accessor :x, :y
@@ -28,7 +28,7 @@ def main
 
   song = Music.new('app.wav')
   song.loop = true
-  song.volume = 0
+  song.volume = 10
   song.play
 
   proj_x = 100
@@ -48,26 +48,21 @@ def main
   update do
     if @pause == false
       proj_nx = proj_x + proj_dx * FRAME
-      if proj_nx < 0 || proj_x + RECT_SIZE > WINDOW_WIDTH
+      if proj_nx < 0 || proj_x + RECT_SIZE > WINDOW_WIDTH || @barreact.contains?(proj_nx,@proj_rect.y)
         proj_dx = proj_dx * -1
         proj_nx = proj_x + proj_dx * FRAME
       end
-      
-      proj_ny = proj_y + proj_dy * FRAME
-      if proj_ny < 0 || proj_y + RECT_SIZE > WINDOW_HEIGHT
-        proj_dy = proj_dy * -1
-        proj_ny = proj_y + proj_dy * FRAME
-      end
-     
-      if @barreact.contains?(@proj_rect.x,@proj_rect.y)
-        proj_dy = proj_dy * -1
-        proj_ny = proj_y + proj_dy * FRAME
-      end
-
       proj_x = proj_nx
-      proj_y = proj_ny
       @proj_rect.x = proj_x
+
+      proj_ny = proj_y + proj_dy * FRAME
+      if proj_ny < 0 || proj_y + RECT_SIZE > WINDOW_HEIGHT || @barreact.contains?(@proj_rect.x,proj_ny)
+        proj_dy = proj_dy * -1
+        proj_ny = proj_y + proj_dy * FRAME
+      end
+      proj_y = proj_ny
       @proj_rect.y = proj_y
+
     end
 
   end
