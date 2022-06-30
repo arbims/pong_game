@@ -1,5 +1,8 @@
 # pong_game
 
+
+![The result](pong.png)
+
 ## install dependencies
 
 ```
