@@ -31,11 +31,21 @@ def draw_targets(target_pool)
       target_pool[i][j] = Target.new(100 + (TARGET_WIDTH + TARGET_PADD) * i ,50 * j, false)
     end
   end
-  
   return target_pool
-
 end
 
+def draw_target_rect(target_pool, targets_rect, target_width, target_height)
+  target_pool.each do |targets|
+    targets.each do |target|
+      if !target.nil? && !target.dead
+        target_rect = Rectangle.new(x: target.x, y: target.y, width: target_width,
+          height: target_height, color: 'green');
+      targets_rect.push({rect: target_rect, target: target})
+      end
+    end
+  end
+  return targets_rect
+end
 
 def main
   set width: WINDOW_WIDTH, height: WINDOW_HEIGHT
@@ -51,39 +61,32 @@ def main
 
   target_pool = Array.new(5){Array.new(5)}
   target_pool = draw_targets(target_pool)
- 
-  target_pool_count = 0
-
-  proj_x = 100
-  proj_y = 100
+  
+  targets_rect = []
+  targets_rect = draw_target_rect(target_pool, targets_rect, TARGET_WIDTH, TARGET_HEIGHT)
+  
+  bar_x = WINDOW_WIDTH/2 - BAR_LEN / 2
+  bar_y = BAR_Y - BAR_THICCNESS/2
+  proj_x = bar_x + RECT_SIZE
+  proj_y = BAR_Y - BAR_THICCNESS/2 - RECT_SIZE
   proj_dx = 1
   proj_dy = 1
 
-  bar_x = WINDOW_WIDTH/2 - BAR_LEN / 2
-  bar_y = BAR_Y - BAR_THICCNESS/2
-  @pause = false
-
+  @pause = true
   @proj_rect = Square.new(x: proj_x, y: proj_y, size: RECT_SIZE, color: RECT_COLOR)
 
   @barreact = Rectangle.new(x: bar_x, y: bar_y, width: BAR_LEN,
     height: BAR_THICCNESS, color: BAR_COLOR)
-  targets_rect = []
-  target_pool.each do |targets|
-    targets.each do |target|
-      if !target.nil? && !target.dead
-      targets_rect.push(Rectangle.new(x: target.x, y: target.y, width: TARGET_WIDTH,
-        height: TARGET_HEIGHT, color: 'green'))
-      end
-    end
-    
-
-  end
 
   update do
+
     if @pause == false
       proj_nx = proj_x + proj_dx * FRAME
       targets_rect.each do |target|
-        if target.contains?(proj_nx,@proj_rect.y)
+        if target[:rect].contains?(proj_nx,@proj_rect.y)
+          target[:target].dead = true
+          target[:rect].remove
+          targets_rect.delete(target)
           proj_dx = proj_dx * -1
           proj_nx = proj_x + proj_dx * FRAME
         end
@@ -97,7 +100,10 @@ def main
 
       proj_ny = proj_y + proj_dy * FRAME
       targets_rect.each do |target|
-        if target.contains?(@proj_rect.x,proj_ny)
+        if target[:rect].contains?(@proj_rect.x,proj_ny)
+          target[:target].dead = true
+          target[:rect].remove
+          targets_rect.delete(target)
           proj_dy = proj_dy * -1
           proj_ny = proj_y + proj_dy * FRAME
         end
@@ -108,13 +114,11 @@ def main
       end
       proj_y = proj_ny
       @proj_rect.y = proj_y
-
     end
-
   end
+ 
   on :key_held do |event|
     if @pause == false
-      # A key was pressed
       key = event.key
       case key
       when 'right'
@@ -126,7 +130,6 @@ def main
   end
 
   on :key_down do |event|
-    # A key was pressed
     key = event.key
     case key
     when 'space'
@@ -134,11 +137,8 @@ def main
     when 'a'
       exit
     end
-    puts @pause
- end
- 
+  end
   show
-
 end
 
 # call main function
