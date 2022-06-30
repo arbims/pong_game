@@ -12,12 +12,11 @@ sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
 gem install ruby2d
 ```
 
-
-```
 |Keys|Description|
 |---|---|
-|<Kbd>&#8593;</Kbd>,<kbd>&#8595;</kbd>|left and right|
+|<Kbd>&#x2192;</Kbd>,<kbd>&#x2190;</kbd>|left and right|
 |<kbd>q</kbd>|Quit|
+
 
 ## to run the program 
 
