@@ -16,7 +16,7 @@ gem install ruby2d
 ```
 |Keys|Description|
 |---|---|
-|<Kbd>&#8592;</Kbd>,<kbd>&#8594;</kbd>|left and right|
+|<Kbd>&#8593;</Kbd>,<kbd>&#8595;</kbd>|left and right|
 |<kbd>q</kbd>|Quit|
 
 ## to run the program 
