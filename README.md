@@ -20,4 +20,4 @@ gem install ruby2d
 
 ## to run the program 
 
-### 1 create empty file todo.txt
+### ruby app.rb
